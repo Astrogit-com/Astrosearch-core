@@ -45,6 +45,18 @@ void WeeklyStorage::AddDelta(uint64_t delta) {
   Save();
 }
 
+void WeeklyStorage::SubDelta(uint64_t delta) {
+  FilterToWeek();
+  for (DailyValue& daily_value : daily_values_) {
+    if (delta == 0)
+      break;
+    uint64_t day_delta = std::min(daily_value.value, delta);
+    daily_value.value -= day_delta;
+    delta -= day_delta;
+  }
+  Save();
+}
+
 void WeeklyStorage::ReplaceTodaysValueIfGreater(uint64_t value) {
   FilterToWeek();
   DailyValue& today = daily_values_.front();
