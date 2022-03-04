@@ -1,6 +1,10 @@
 import * as React from 'react'
 
-import Registry, { SwapExchangeProxy } from './registry'
+import Registry, {
+  SwapExchangeProxy,
+  SwapExchangeProxyFantom,
+  SwapExchangeProxyOptimism
+} from './registry'
 import { WalletAccountType } from '../../../constants/types'
 import { reduceAddress } from '../../../utils/reduce-address'
 
@@ -13,4 +17,4 @@ export default function useAddressLabels (accounts: WalletAccountType[]) {
     Registry[address.toLowerCase()] ?? findAccountName(address) ?? reduceAddress(address)
 }
 
-export { SwapExchangeProxy }
+export { SwapExchangeProxy, SwapExchangeProxyFantom, SwapExchangeProxyOptimism }

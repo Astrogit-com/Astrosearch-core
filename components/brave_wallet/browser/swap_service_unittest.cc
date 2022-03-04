@@ -314,6 +314,81 @@ TEST_F(SwapServiceUnitTest, GetSwapConfigurationPolygonMainnet) {
             SwapService::GetAffiliateAddress(mojom::kPolygonMainnetChainId));
 }
 
+TEST_F(SwapServiceUnitTest, GetSwapConfigurationBinanceSmartChainMainnet) {
+  std::string swap_api_url = "https://bsc.api.0x.org/";
+  std::string buy_token_percantage_fee = "0.00875";
+  std::string fee_recipient = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  std::string affiliate_address = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  EXPECT_EQ(swap_api_url, SwapService::GetBaseSwapURL(
+                              mojom::kBinanceSmartChainMainnetChainId));
+  EXPECT_EQ(buy_token_percantage_fee,
+            SwapService::GetFee(mojom::kBinanceSmartChainMainnetChainId));
+  EXPECT_EQ(fee_recipient, SwapService::GetFeeRecipient(
+                               mojom::kBinanceSmartChainMainnetChainId));
+  EXPECT_EQ(affiliate_address, SwapService::GetAffiliateAddress(
+                                   mojom::kBinanceSmartChainMainnetChainId));
+}
+
+TEST_F(SwapServiceUnitTest, GetSwapConfigurationAvalancheMainnet) {
+  std::string swap_api_url = "https://avalanche.api.0x.org/";
+  std::string buy_token_percantage_fee = "0.00875";
+  std::string fee_recipient = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  std::string affiliate_address = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  EXPECT_EQ(swap_api_url,
+            SwapService::GetBaseSwapURL(mojom::kAvalancheMainnetChainId));
+  EXPECT_EQ(buy_token_percantage_fee,
+            SwapService::GetFee(mojom::kAvalancheMainnetChainId));
+  EXPECT_EQ(fee_recipient,
+            SwapService::GetFeeRecipient(mojom::kAvalancheMainnetChainId));
+  EXPECT_EQ(affiliate_address,
+            SwapService::GetAffiliateAddress(mojom::kAvalancheMainnetChainId));
+}
+
+TEST_F(SwapServiceUnitTest, GetSwapConfigurationFantomMainnet) {
+  std::string swap_api_url = "https://fantom.api.0x.org/";
+  std::string buy_token_percantage_fee = "0.00875";
+  std::string fee_recipient = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  std::string affiliate_address = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  EXPECT_EQ(swap_api_url,
+            SwapService::GetBaseSwapURL(mojom::kFantomMainnetChainId));
+  EXPECT_EQ(buy_token_percantage_fee,
+            SwapService::GetFee(mojom::kFantomMainnetChainId));
+  EXPECT_EQ(fee_recipient,
+            SwapService::GetFeeRecipient(mojom::kFantomMainnetChainId));
+  EXPECT_EQ(affiliate_address,
+            SwapService::GetAffiliateAddress(mojom::kFantomMainnetChainId));
+}
+
+TEST_F(SwapServiceUnitTest, GetSwapConfigurationCeloMainnet) {
+  std::string swap_api_url = "https://celo.api.0x.org/";
+  std::string buy_token_percantage_fee = "0.00875";
+  std::string fee_recipient = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  std::string affiliate_address = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  EXPECT_EQ(swap_api_url,
+            SwapService::GetBaseSwapURL(mojom::kCeloMainnetChainId));
+  EXPECT_EQ(buy_token_percantage_fee,
+            SwapService::GetFee(mojom::kCeloMainnetChainId));
+  EXPECT_EQ(fee_recipient,
+            SwapService::GetFeeRecipient(mojom::kCeloMainnetChainId));
+  EXPECT_EQ(affiliate_address,
+            SwapService::GetAffiliateAddress(mojom::kCeloMainnetChainId));
+}
+
+TEST_F(SwapServiceUnitTest, GetSwapConfigurationOptimismMainnet) {
+  std::string swap_api_url = "https://optimism.api.0x.org/";
+  std::string buy_token_percantage_fee = "0.00875";
+  std::string fee_recipient = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  std::string affiliate_address = "0xbd9420A98a7Bd6B89765e5715e169481602D9c3d";
+  EXPECT_EQ(swap_api_url,
+            SwapService::GetBaseSwapURL(mojom::kOptimismMainnetChainId));
+  EXPECT_EQ(buy_token_percantage_fee,
+            SwapService::GetFee(mojom::kOptimismMainnetChainId));
+  EXPECT_EQ(fee_recipient,
+            SwapService::GetFeeRecipient(mojom::kOptimismMainnetChainId));
+  EXPECT_EQ(affiliate_address,
+            SwapService::GetAffiliateAddress(mojom::kOptimismMainnetChainId));
+}
+
 TEST_F(SwapServiceUnitTest, GetSwapConfigurationOtherNet) {
   std::string swap_api_url;
   std::string buy_token_percantage_fee;
@@ -332,6 +407,11 @@ TEST_F(SwapServiceUnitTest, IsSwapSupported) {
   EXPECT_TRUE(IsSwapSupported(mojom::kMainnetChainId));
   EXPECT_TRUE(IsSwapSupported(mojom::kRopstenChainId));
   EXPECT_TRUE(IsSwapSupported(mojom::kPolygonMainnetChainId));
+  EXPECT_TRUE(IsSwapSupported(mojom::kBinanceSmartChainMainnetChainId));
+  EXPECT_TRUE(IsSwapSupported(mojom::kAvalancheMainnetChainId));
+  EXPECT_TRUE(IsSwapSupported(mojom::kFantomMainnetChainId));
+  EXPECT_TRUE(IsSwapSupported(mojom::kCeloMainnetChainId));
+  EXPECT_TRUE(IsSwapSupported(mojom::kOptimismMainnetChainId));
   EXPECT_FALSE(IsSwapSupported(mojom::kRinkebyChainId));
   EXPECT_FALSE(IsSwapSupported(""));
   EXPECT_FALSE(IsSwapSupported("invalid chain_id"));

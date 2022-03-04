@@ -19,7 +19,11 @@ import { getLocale } from '../../../common/locale'
 
 // Hooks
 import usePricing from './pricing'
-import useAddressLabels, { SwapExchangeProxy } from './address-labels'
+import useAddressLabels, {
+  SwapExchangeProxy,
+  SwapExchangeProxyOptimism,
+  SwapExchangeProxyFantom
+} from './address-labels'
 import useBalance from './balance'
 
 // Options
@@ -195,6 +199,12 @@ export function useTransactionParser (
     const accountNativeBalance = getBalance(account, nativeAsset)
     const accountTokenBalance = getBalance(account, token)
 
+    const isSwap = [
+      SwapExchangeProxy,
+      SwapExchangeProxyFantom,
+      SwapExchangeProxyOptimism
+    ].includes(to.toLowerCase())
+
     switch (true) {
       // transfer(address recipient, uint256 amount) → bool
       case txType === BraveWallet.TransactionType.ERC20Transfer: {
@@ -328,7 +338,7 @@ export function useTransactionParser (
       }
 
       // FIXME: swap needs a real parser to figure out the From and To details.
-      case to.toLowerCase() === SwapExchangeProxy:
+      case isSwap:
       case txType === BraveWallet.TransactionType.ETHSend:
       case txType === BraveWallet.TransactionType.Other:
       default: {
@@ -364,7 +374,7 @@ export function useTransactionParser (
           insufficientFundsError: new Amount(value)
             .plus(gasFee)
             .gt(accountNativeBalance),
-          isSwap: to.toLowerCase() === SwapExchangeProxy,
+          isSwap,
           ...feeDetails
         } as ParsedTransaction
       }

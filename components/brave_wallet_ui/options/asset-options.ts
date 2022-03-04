@@ -10,20 +10,44 @@ import {
   BNBIconUrl,
   BTCIconUrl,
   ETHIconUrl,
-  MATICIconUrl,
   ZRXIconUrl
 } from '../assets/asset-icons'
+import {
+  CeloIcon,
+  FantomIcon,
+  OptimismIcon
+} from '../assets/network-icons'
 import MoonCatIcon from '../assets/png-icons/mooncat.png'
 
 export function makeNetworkAsset (network: BraveWallet.NetworkInfo) {
   let logo
   switch (true) {
-    case network.symbol.toUpperCase() === 'ETH':
-      logo = ETHIconUrl
+    case network.chainId === BraveWallet.OPTIMISM_MAINNET_CHAIN_ID:
+      logo = OptimismIcon
       break
 
     case network.chainId === BraveWallet.POLYGON_MAINNET_CHAIN_ID:
-      logo = MATICIconUrl
+      logo = 'chrome://erc-token-images/matic.png'
+      break
+
+    case network.chainId === BraveWallet.BINANCE_SMART_CHAIN_MAINNET_CHAIN_ID:
+      logo = BNBIconUrl
+      break
+
+    case network.chainId === BraveWallet.AVALANCHE_MAINNET_CHAIN_ID:
+      logo = 'chrome://erc-token-images/avax.png'
+      break
+
+    case network.chainId === BraveWallet.FANTOM_MAINNET_CHAIN_ID:
+      logo = FantomIcon
+      break
+
+    case network.chainId === BraveWallet.CELO_MAINNET_CHAIN_ID:
+      logo = CeloIcon
+      break
+
+    case network.symbol.toUpperCase() === 'ETH':
+      logo = 'chrome://erc-token-images/eth.png'
       break
 
     default:
