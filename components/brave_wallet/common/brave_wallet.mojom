@@ -5,6 +5,7 @@
 
 module brave_wallet.mojom;
 
+import "brave/components/brave_wallet/common/solana.mojom";
 import "mojo/public/mojom/base/time.mojom";
 import "mojo/public/mojom/base/values.mojom";
 import "url/mojom/url.mojom";
@@ -722,10 +723,6 @@ enum TransactionType {
   ERC721TransferFrom,
   ERC721SafeTransferFrom,
   Other
-};
-
-// TODO(jocelyn): Fill the struct with needed fields.
-struct SolanaTxData {
 };
 
 // TODO(spylogsster): Fill the struct with needed fields.

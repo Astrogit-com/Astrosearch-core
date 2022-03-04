@@ -20,6 +20,13 @@ SolanaTransaction::SolanaTransaction(
     const std::vector<SolanaInstruction>& instructions)
     : message_(recent_blockhash, fee_payer, instructions) {}
 
+SolanaTransaction::SolanaTransaction(const SolanaMessage& message)
+    : message_(message) {}
+
+bool SolanaTransaction::operator==(const SolanaTransaction& tx) const {
+  return message_ == tx.message_;
+}
+
 // Get serialized and signed transaction.
 // A transaction contains a compact-array of signatures, followed by a message.
 // A compact-array is serialized as the array length, followed by each array
@@ -57,6 +64,44 @@ std::string SolanaTransaction::GetSignedTransaction(
     return "";
 
   return base::Base64Encode(transaction_bytes);
+}
+
+mojom::SolanaTxDataPtr SolanaTransaction::ToSolanaTxData() const {
+  return message_.ToSolanaTxData();
+}
+
+base::Value SolanaTransaction::ToValue() const {
+  base::Value dict(base::Value::Type::DICTIONARY);
+  dict.SetKey("message", message_.ToValue());
+  return dict;
+}
+
+// static
+absl::optional<SolanaTransaction> SolanaTransaction::FromValue(
+    const base::Value& value) {
+  if (!value.is_dict())
+    return absl::nullopt;
+  const base::Value* message_dict = value.FindKey("message");
+  if (!message_dict || !message_dict->is_dict())
+    return absl::nullopt;
+
+  absl::optional<SolanaMessage> message =
+      SolanaMessage::FromValue(*message_dict);
+  if (!message)
+    return absl::nullopt;
+
+  return SolanaTransaction(*message);
+}
+
+// static
+std::unique_ptr<SolanaTransaction> SolanaTransaction::FromSolanaTxData(
+    mojom::SolanaTxDataPtr solana_tx_data) {
+  std::vector<SolanaInstruction> instructions;
+  SolanaInstruction::FromMojomSolanaInstructions(solana_tx_data->instructions,
+                                                 &instructions);
+  return std::make_unique<SolanaTransaction>(solana_tx_data->recent_blockhash,
+                                             solana_tx_data->fee_payer,
+                                             instructions);
 }
 
 }  // namespace brave_wallet
