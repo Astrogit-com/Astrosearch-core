@@ -80,8 +80,10 @@ class JsonRpcService : public KeyedService, public mojom::JsonRpcService {
       base::OnceCallback<void(uint256_t result,
                               mojom::ProviderError error,
                               const std::string& error_message)>;
-  void GetTransactionCount(const std::string& address,
-                           GetTxCountCallback callback);
+  void GetEthTransactionCount(const std::string& address,
+                              GetTxCountCallback callback);
+  void GetFilTransactionCount(const std::string& address,
+                              GetTxCountCallback callback);
 
   using GetTxReceiptCallback =
       base::OnceCallback<void(TransactionReceipt result,
@@ -267,7 +269,12 @@ class JsonRpcService : public KeyedService, public mojom::JsonRpcService {
                        const std::string& body,
                        const base::flat_map<std::string, std::string>& headers);
 
-  void OnGetTransactionCount(
+  void OnEthGetTransactionCount(
+      GetTxCountCallback callback,
+      const int status,
+      const std::string& body,
+      const base::flat_map<std::string, std::string>& headers);
+  void OnFilGetTransactionCount(
       GetTxCountCallback callback,
       const int status,
       const std::string& body,

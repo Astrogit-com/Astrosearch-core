@@ -17,6 +17,8 @@ namespace brave_wallet {
 class TxService;
 class JsonRpcService;
 class KeyringService;
+class FilNonceTracker;
+class FilTxStateManager;
 
 class FilTxManager : public TxManager {
  public:
@@ -24,7 +26,7 @@ class FilTxManager : public TxManager {
                JsonRpcService* json_rpc_service,
                KeyringService* keyring_service,
                PrefService* prefs);
-  ~FilTxManager() override = default;
+  ~FilTxManager() override;
 
   void AddUnapprovedTransaction(mojom::TxDataUnionPtr tx_data_union,
                                 const std::string& from,
@@ -52,6 +54,9 @@ class FilTxManager : public TxManager {
  private:
   // TxManager
   void UpdatePendingTransactions() override;
+  FilTxStateManager* GetFilTxStateManager();
+
+  std::unique_ptr<FilNonceTracker> nonce_tracker_;
 };
 
 }  // namespace brave_wallet
