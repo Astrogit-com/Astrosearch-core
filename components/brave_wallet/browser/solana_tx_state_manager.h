@@ -20,6 +20,7 @@ class Value;
 namespace brave_wallet {
 
 class TxMeta;
+class SolanaTxMeta;
 class JsonRpcService;
 
 class SolanaTxStateManager : public TxStateManager {
@@ -28,6 +29,8 @@ class SolanaTxStateManager : public TxStateManager {
   ~SolanaTxStateManager() override;
   SolanaTxStateManager(const SolanaTxStateManager&) = delete;
   SolanaTxStateManager operator=(const SolanaTxStateManager&) = delete;
+
+  std::unique_ptr<SolanaTxMeta> GetSolanaTx(const std::string& id);
 
  private:
   std::unique_ptr<TxMeta> ValueToTxMeta(const base::Value& value) override;
