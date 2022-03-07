@@ -21,7 +21,19 @@ export const StyledRemoveIcon = styled('span')<{}>`
   height: 20px;
   display: inline-block;
   margin-right: 4px;
+
+  @media screen and (max-width: 700px) {
+    vertical-align: top;
+    align: right;
+    display: block;
+  }
 `
+
 export const StyledLink = styled('a')<{}>`
   text-decoration: none;
+`
+
+export const StyledDate = styled('span')<{}>`
+  vertical-align: bottom;
+  text-align: right;
 `

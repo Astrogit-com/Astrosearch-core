@@ -10,6 +10,7 @@ import CategoryLikePicker from './categoryLikePicker'
 import DisabledContent from './disabledContent'
 import GrantComplete from './grantComplete'
 import GrantWrapper from './grantWrapper'
+import GridPending from './gridPending'
 import List from './list'
 import ListToken from './listToken'
 import MainToggle from './mainToggle'
@@ -47,6 +48,7 @@ export {
   DisabledContent,
   GrantComplete,
   GrantWrapper,
+  GridPending,
   List,
   ListToken,
   MainToggle,
