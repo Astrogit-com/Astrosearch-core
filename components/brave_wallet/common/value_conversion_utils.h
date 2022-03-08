@@ -12,7 +12,6 @@
 #include "base/values.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "url/origin.h"
 
 namespace brave_wallet {
 
@@ -20,7 +19,7 @@ base::Value EthereumChainToValue(const mojom::EthereumChainPtr& chain);
 absl::optional<mojom::EthereumChain> ValueToEthereumChain(
     const base::Value& value);
 base::ListValue PermissionRequestResponseToValue(
-    const url::Origin& origin,
+    const std::string& origin,
     const std::vector<std::string> accounts);
 
 mojom::BlockchainTokenPtr ValueToBlockchainToken(const base::Value& value);
