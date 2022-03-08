@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
-#include "brave/components/brave_wallet/common/brave_wallet_types.h"
 
 namespace brave_wallet {
 
@@ -24,7 +23,7 @@ class FilAddress {
   static FilAddress FromPublicKey(const std::vector<uint8_t>& public_key,
                                   mojom::FilecoinAddressProtocol protocol,
                                   const std::string& network);
-  static FilAddress From(const std::string& address);
+  static FilAddress FromAddress(const std::string& address);
   static bool IsValidAddress(const std::string& input);
   FilAddress();
   FilAddress(const FilAddress& other);

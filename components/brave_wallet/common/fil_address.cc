@@ -4,9 +4,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "brave/components/brave_wallet/common/fil_address.h"
-#include <charconv>
 
-#include "base/check_op.h"
 #include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
@@ -18,27 +16,28 @@ namespace brave_wallet {
 
 namespace {
 
-#define SECP256K_PUBLIC_KEY_SIZE 20
-#define SECP256K_ADDRESS_SIZE 41
-#define BLS_ADDRESS_SIZE 86
-#define BLS_PUBLIC_KEY_SIZE 48
+constexpr int kChecksumSize = 4;
+constexpr size_t kPublicKeySizeSecp256K = 20;
+constexpr size_t kAddressSizeSecp256K = 41;
+constexpr size_t kPublicKeySizeBLS = 48;
+constexpr size_t kAddressSizeBLS = 86;
 
-std::vector<uint8_t> BlakeHash(const std::vector<uint8_t>& payload,
-                               size_t length) {
+absl::optional<std::vector<uint8_t>> BlakeHash(
+    const std::vector<uint8_t>& payload,
+    size_t length) {
   blake2b_state blakeState;
   if (blake2b_init(&blakeState, length) != 0) {
     VLOG(0) << __func__ << ": blake2b_init failed";
-    return std::vector<uint8_t>();
+    return absl::nullopt;
   }
   if (blake2b_update(&blakeState, payload.data(), payload.size()) != 0) {
     VLOG(0) << __func__ << ": blake2b_update failed";
-    return std::vector<uint8_t>();
+    return absl::nullopt;
   }
-  std::vector<uint8_t> result;
-  result.resize(length);
+  std::vector<uint8_t> result(length, 0);
   if (blake2b_final(&blakeState, result.data(), length) != 0) {
     VLOG(0) << __func__ << ": blake2b_final failed";
-    return result;
+    return absl::nullopt;
   }
   return result;
 }
@@ -56,6 +55,7 @@ absl::optional<mojom::FilecoinAddressProtocol> ToProtocol(char input) {
     return mojom::FilecoinAddressProtocol::SECP256K1;
   return absl::nullopt;
 }
+
 }  // namespace
 
 FilAddress::FilAddress(const std::vector<uint8_t>& bytes,
@@ -66,7 +66,7 @@ FilAddress::FilAddress(const std::vector<uint8_t>& bytes,
 }
 FilAddress::FilAddress() = default;
 FilAddress::FilAddress(const FilAddress& other) = default;
-FilAddress::~FilAddress() {}
+FilAddress::~FilAddress() = default;
 
 bool FilAddress::IsEqual(const FilAddress& other) const {
   return bytes_.size() == other.bytes_.size() &&
@@ -82,10 +82,16 @@ bool FilAddress::operator!=(const FilAddress& other) const {
   return !IsEqual(other);
 }
 
+// Decodes Filecoin BLS/SECP256K addresses within rules
+// https://spec.filecoin.io/appendix/address/#section-appendix.address.string
+// |------------|----------|---------|----------|
+// |  network   | protocol | payload | checksum |
+// |------------|----------|---------|----------|
+// | 'f' or 't' |  1 byte  | n bytes | 4 bytes  |
 // static
-FilAddress FilAddress::From(const std::string& address) {
-  if (address.size() != BLS_ADDRESS_SIZE &&
-      address.size() != SECP256K_ADDRESS_SIZE)
+FilAddress FilAddress::FromAddress(const std::string& address) {
+  if (address.size() != kAddressSizeBLS &&
+      address.size() != kAddressSizeSecp256K)
     return FilAddress();
 
   auto protocol = ToProtocol(address[1]);
@@ -101,12 +107,14 @@ FilAddress FilAddress::From(const std::string& address) {
   if (payload.empty())
     return FilAddress();
 
-  int checksum_size = 4;
-  std::string key{payload.substr(0, payload.size() - checksum_size)};
+  std::string key{payload.substr(0, payload.size() - kChecksumSize)};
   std::vector<uint8_t> public_key(key.begin(), key.end());
   return FilAddress::FromPublicKey(public_key, protocol.value(), network);
 }
 
+// Creates FilAddress from SECP256K uncompressed public key
+// with specified protocol  and network
+// https://spec.filecoin.io/appendix/address/#section-appendix.address.string
 // static
 FilAddress FilAddress::FromUncompressedPublicKey(
     const std::vector<uint8_t>& uncompressed_public_key,
@@ -116,13 +124,15 @@ FilAddress FilAddress::FromUncompressedPublicKey(
     return FilAddress();
   if (uncompressed_public_key.empty())
     return FilAddress();
-  auto public_key =
-      BlakeHash(uncompressed_public_key, SECP256K_PUBLIC_KEY_SIZE);
-  if (public_key.empty())
+  auto public_key = BlakeHash(uncompressed_public_key, kPublicKeySizeSecp256K);
+  if (!public_key || public_key->empty())
     return FilAddress();
-  return FromPublicKey(public_key, protocol, network);
+  return FromPublicKey(*public_key, protocol, network);
 }
 
+// Creates FilAddress from SECP256K or BLS public key
+// with specified protocol  and network
+// https://spec.filecoin.io/appendix/address/#section-appendix.address.string
 // static
 FilAddress FilAddress::FromPublicKey(const std::vector<uint8_t>& public_key,
                                      mojom::FilecoinAddressProtocol protocol,
@@ -130,10 +140,10 @@ FilAddress FilAddress::FromPublicKey(const std::vector<uint8_t>& public_key,
   if (!IsValidNetwork(network))
     return FilAddress();
   if (protocol == mojom::FilecoinAddressProtocol::SECP256K1) {
-    if (public_key.size() != SECP256K_PUBLIC_KEY_SIZE)
+    if (public_key.size() != kPublicKeySizeSecp256K)
       return FilAddress();
   } else if (protocol == mojom::FilecoinAddressProtocol::BLS) {
-    if (public_key.size() != BLS_PUBLIC_KEY_SIZE)
+    if (public_key.size() != kPublicKeySizeBLS)
       return FilAddress();
   }
   return FilAddress(public_key, protocol, network);
@@ -142,17 +152,24 @@ FilAddress FilAddress::FromPublicKey(const std::vector<uint8_t>& public_key,
 // static
 bool FilAddress::IsValidAddress(const std::string& address) {
   return !address.empty() &&
-         FilAddress::From(address).ToChecksumAddress() == address;
+         FilAddress::FromAddress(address).ToChecksumAddress() == address;
 }
 
+// https://spec.filecoin.io/appendix/address/#section-appendix.address.string
+// |------------|----------|---------|----------|
+// |  network   | protocol | payload | checksum |
+// |------------|----------|---------|----------|
+// | 'f' or 't' |  1 byte  | n bytes | 4 bytes  |
 std::string FilAddress::ToChecksumAddress() const {
   if (bytes_.empty())
     return std::string();
   std::vector<uint8_t> payload(bytes_);
   std::vector<uint8_t> checksumPayload(bytes_);
   checksumPayload.insert(checksumPayload.begin(), static_cast<int>(protocol_));
-  auto checksum = BlakeHash(checksumPayload, 4);
-  payload.insert(payload.end(), checksum.begin(), checksum.end());
+  auto checksum = BlakeHash(checksumPayload, kChecksumSize);
+  if (!checksum)
+    return std::string();
+  payload.insert(payload.end(), checksum->begin(), checksum->end());
   std::string input(payload.begin(), payload.end());
   std::string encoded_output = base::ToLowerASCII(
       base32::Base32Encode(input, base32::Base32EncodePolicy::OMIT_PADDING));
