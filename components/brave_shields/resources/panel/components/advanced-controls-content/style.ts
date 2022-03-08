@@ -28,6 +28,7 @@ export const FooterActionBox = styled.div`
     text-decoration: none;
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
   
   i {

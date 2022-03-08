@@ -5,13 +5,12 @@ import Toggle from '../../../../../web-components/toggle'
 import AdvancedControlsContent from '../advanced-controls-content'
 import { getLocale, splitStringForTag } from '../../../../../common/locale'
 import DataContext from '../../state/context'
-import { useFavIconUrl } from '../../state/hooks'
 import getPanelBrowserAPI from '../../api/panel_browser_api'
+import Button from '$web-components/button'
 
 function MainPanel () {
   const [isExpanded, setIsExpanded] = React.useState(false)
   const { siteBlockInfo } = React.useContext(DataContext)
-  const { favIconUrl } = useFavIconUrl(siteBlockInfo?.host)
 
   const braveShieldsStatusText = splitStringForTag(siteBlockInfo?.isShieldsEnabled ? getLocale('braveShieldsUp') : getLocale('braveShieldsDown'))
   const braveShieldsBlockedNote = splitStringForTag(getLocale('braveShieldsBlockedNote'))
@@ -26,12 +25,14 @@ function MainPanel () {
       return (
         <S.ReportSiteBox>
           <p>{getLocale('braveShieldsDownDesc')}</p>
-          <div>
+          <S.ReportSiteAction>
             <span>{getLocale('braveShieldsReportSiteDesc')}</span>
-            <S.ReportSiteButton>
+            <Button
+              onClick={() => {}}
+            >
               {getLocale('braveShieldsReportSite')}
-            </S.ReportSiteButton>
-          </div>
+            </Button>
+          </S.ReportSiteAction>
         </S.ReportSiteBox>
       )
     }
@@ -81,7 +82,7 @@ function MainPanel () {
       <S.HeaderBox>
       <S.SiteTitleBox>
         <S.FavIconBox>
-          <img src={favIconUrl} />
+          <img key={siteBlockInfo?.faviconUrl.url} src={siteBlockInfo?.faviconUrl.url} />
         </S.FavIconBox>
         <S.SiteTitle>{siteBlockInfo?.host}</S.SiteTitle>
       </S.SiteTitleBox>

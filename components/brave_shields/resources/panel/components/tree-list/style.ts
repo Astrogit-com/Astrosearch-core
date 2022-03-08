@@ -32,6 +32,22 @@ export const Footer = styled.section`
   bottom: 0;
   width: 100%;
   z-index: 2;
+
+  button {
+    width: 100%;
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+  }
 `
 
 export const SiteTitleBox = styled.div`
