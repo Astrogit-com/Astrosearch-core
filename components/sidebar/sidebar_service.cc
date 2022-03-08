@@ -6,6 +6,7 @@
 #include "brave/components/sidebar/sidebar_service.h"
 
 #include <algorithm>
+#include <codecvt>
 #include <utility>
 
 #include "base/strings/utf_string_conversions.h"
@@ -19,34 +20,42 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#include "base/logging.h"
+
 namespace sidebar {
 
 namespace {
 
 SidebarItem GetBuiltInItemForType(SidebarItem::BuiltInItemType type) {
+  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
+  const ui::ResourceBundle& bundle = ui::ResourceBundle::GetSharedInstance();
   switch (type) {
     case SidebarItem::BuiltInItemType::kBraveTalk:
       return SidebarItem::Create(
           GURL(kBraveTalkURL),
-          l10n_util::GetStringUTF16(IDS_SIDEBAR_BRAVE_TALK_ITEM_TITLE),
+          converter.from_bytes(bundle.LoadLocalizedResourceString(
+              IDS_SIDEBAR_BRAVE_TALK_ITEM_TITLE)),
           SidebarItem::Type::kTypeBuiltIn,
           SidebarItem::BuiltInItemType::kBraveTalk, false);
     case SidebarItem::BuiltInItemType::kWallet:
       return SidebarItem::Create(
           GURL("chrome://wallet/"),
-          l10n_util::GetStringUTF16(IDS_SIDEBAR_WALLET_ITEM_TITLE),
+          converter.from_bytes(bundle.LoadLocalizedResourceString(
+              IDS_SIDEBAR_WALLET_ITEM_TITLE)),
           SidebarItem::Type::kTypeBuiltIn,
           SidebarItem::BuiltInItemType::kWallet, false);
     case SidebarItem::BuiltInItemType::kBookmarks:
       return SidebarItem::Create(
           GURL(kSidebarBookmarksURL),
-          l10n_util::GetStringUTF16(IDS_SIDEBAR_BOOKMARKS_ITEM_TITLE),
+          converter.from_bytes(bundle.LoadLocalizedResourceString(
+              IDS_SIDEBAR_BOOKMARKS_ITEM_TITLE)),
           SidebarItem::Type::kTypeBuiltIn,
           SidebarItem::BuiltInItemType::kBookmarks, true);
     case SidebarItem::BuiltInItemType::kHistory:
       return SidebarItem::Create(
           GURL("chrome://history/"),
-          l10n_util::GetStringUTF16(IDS_SIDEBAR_HISTORY_ITEM_TITLE),
+          converter.from_bytes(bundle.LoadLocalizedResourceString(
+              IDS_SIDEBAR_HISTORY_ITEM_TITLE)),
           SidebarItem::Type::kTypeBuiltIn,
           SidebarItem::BuiltInItemType::kHistory, true);
     default:
