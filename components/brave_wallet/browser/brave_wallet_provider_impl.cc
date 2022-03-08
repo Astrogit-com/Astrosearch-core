@@ -597,8 +597,8 @@ void BraveWalletProviderImpl::Request(const std::string& json_payload,
                                       bool auto_retry_on_network_change,
                                       RequestCallback callback) {
   if (json_rpc_service_) {
-    json_rpc_service_->Request(json_payload, true, mojom::CoinType::ETH,
-                               std::move(callback));
+    json_rpc_service_->RequestSelected(json_payload, true, mojom::CoinType::ETH,
+                                       std::move(callback));
   }
 }
 

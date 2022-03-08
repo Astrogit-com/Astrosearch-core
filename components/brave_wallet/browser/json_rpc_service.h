@@ -70,10 +70,17 @@ class JsonRpcService : public KeyedService, public mojom::JsonRpcService {
   void Request(const std::string& json_payload,
                bool auto_retry_on_network_change,
                mojom::CoinType coin,
+               const std::string& chain_id,
                RequestCallback callback) override;
+
+  void RequestSelected(const std::string& json_payload,
+                       bool auto_retry_on_network_change,
+                       mojom::CoinType coin,
+                       RequestCallback callback) override;
 
   void GetBalance(const std::string& address,
                   mojom::CoinType coin,
+                  const std::string& chain_id,
                   GetBalanceCallback callback) override;
 
   using GetTxCountCallback =

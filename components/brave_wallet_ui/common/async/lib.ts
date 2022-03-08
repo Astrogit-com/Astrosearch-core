@@ -79,7 +79,8 @@ export const onConnectHardwareWallet = (opts: HardwareWalletConnectOpts): Promis
 export const getBalance = (address: string): Promise<string> => {
   return new Promise(async (resolve, reject) => {
     const { jsonRpcService } = getAPIProxy()
-    const result = await jsonRpcService.getBalance(address, BraveWallet.CoinType.ETH)
+    // TODO Pass chainId parameter
+    const result = await jsonRpcService.getBalance(address, BraveWallet.CoinType.ETH, "<chainId>")
     if (result.error === BraveWallet.ProviderError.kSuccess) {
       resolve(Amount.normalize(result.balance))
     } else {
@@ -190,8 +191,9 @@ export function refreshBalances () {
     const { jsonRpcService } = getAPIProxy()
     const { wallet: { accounts, userVisibleTokensInfo } } = getState()
 
+    // TODO Pass chainId parameter
     const getBalanceReturnInfos = await Promise.all(accounts.map(async (account) => {
-      const balanceInfo = await jsonRpcService.getBalance(account.address, account.coin)
+      const balanceInfo = await jsonRpcService.getBalance(account.address, account.coin, "<chainId>")
       return balanceInfo
     }))
     await dispatch(WalletActions.nativeAssetBalancesUpdated({

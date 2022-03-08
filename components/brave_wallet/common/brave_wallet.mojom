@@ -637,7 +637,7 @@ interface JsonRpcService {
   GetNetworkUrl(CoinType coin) => (string network_url);
 
   // Obtains the native balance (e.g. ETH for Ethereum) for the address
-  GetBalance(string address, CoinType coin) => (string balance, ProviderError error, string error_message);
+  GetBalance(string address, CoinType coin, string chain_id) => (string balance, ProviderError error, string error_message);
 
   // Obtains the contract's ERC20 compatible balance for an address
   GetERC20TokenBalance(string contract,
@@ -653,9 +653,13 @@ interface JsonRpcService {
   // Unstoppable Domains lookups
   UnstoppableDomainsGetEthAddr(string domain) => (string address, ProviderError error, string error_message);
 
+  // Used for making requests to a specifc EVM compatible network
+  Request(string json_payload, bool auto_retry_on_network_change, CoinType coin, string chain_id)
+    => (int32 http_code, string response, map<string, string> headers);
+
   // Used for making requests to the currently selected EVM compatible node for
   // coin ETH and other nodes with corresponding coin types 
-  Request(string json_payload, bool auto_retry_on_network_change, CoinType coin)
+  RequestSelected(string json_payload, bool auto_retry_on_network_change, CoinType coin)
     => (int32 http_code, string response, map<string, string> headers);
 
   // Adds an observer for the events of JsonRpcService
