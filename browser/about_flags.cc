@@ -19,6 +19,7 @@
 #include "brave/components/brave_today/common/features.h"
 #include "brave/components/brave_vpn/buildflags/buildflags.h"
 #include "brave/components/brave_wallet/common/features.h"
+#include "brave/components/de_amp/common/features.h"
 #include "brave/components/debounce/common/features.h"
 #include "brave/components/decentralized_dns/buildflags/buildflags.h"
 #include "brave/components/ipfs/buildflags/buildflags.h"
@@ -61,7 +62,9 @@ using brave_shields::features::kBraveDomainBlock1PES;
 using brave_shields::features::kBraveExtensionNetworkBlocking;
 using brave_shields::features::kCosmeticFilteringSyncLoad;
 
+using de_amp::features::kBraveDeAMP;
 using debounce::features::kBraveDebounce;
+
 using ntp_background_images::features::kBraveNTPBrandedWallpaperDemo;
 using ntp_background_images::features::kBraveNTPSuperReferralWallpaper;
 
@@ -135,6 +138,9 @@ constexpr char kBraveDebounceName[] = "Enable debouncing";
 constexpr char kBraveDebounceDescription[] =
     "Enable support for skipping top-level redirect tracking URLs";
 
+constexpr char kBraveDeAMPName[] = "Enable De-AMP";
+constexpr char kBraveDeAMPDescription[] = "Enable De-AMPing feature";
+
 constexpr char kBraveExtensionNetworkBlockingName[] =
     "Enable extension network blocking";
 constexpr char kBraveExtensionNetworkBlockingDescription[] =
@@ -182,9 +188,12 @@ constexpr char kBraveSkusProdEnvName[] = "production";
 constexpr char kBraveSkusStagingEnvName[] = "staging";
 constexpr char kBraveSkusDevEnvName[] = "development";
 
+constexpr char kBraveShieldsV1Name[] = "Enable Brave Shields v1";
+constexpr char kBraveShieldsV1Description[] =
+    "Legacy extension-based panel UX/UI for Brave Shields";
 constexpr char kBraveShieldsV2Name[] = "Enable Brave Shields v2";
 constexpr char kBraveShieldsV2Description[] =
-    "Major UX/UI overhaul of Brave Shields";
+    "Major UX/UI overhaul of Brave Shields panel";
 
 constexpr char kBraveDecentralizedDnsName[] = "Enable decentralized DNS";
 constexpr char kBraveDecentralizedDnsDescription[] =
@@ -424,14 +433,19 @@ const flags_ui::FeatureEntry::Choice kBraveSkusEnvChoices[] = {
 #endif  // BUILDFLAG(ENABLE_BRAVE_TRANSLATE_GO)
 
 #if !defined(OS_ANDROID)
-#define BRAVE_SHIELDS_V2_FEATURE_ENTRIES                            \
-    {"brave-shields-v2",                                            \
-     flag_descriptions::kBraveShieldsV2Name,                        \
-     flag_descriptions::kBraveShieldsV2Description,                 \
-     kOsDesktop,                                                    \
-     FEATURE_VALUE_TYPE(brave_shields::features::kBraveShieldsPanelV2)},
+#define BRAVE_SHIELDS_FEATURE_ENTRIES                                    \
+    {"brave-shields-v2",                                                 \
+     flag_descriptions::kBraveShieldsV2Name,                             \
+     flag_descriptions::kBraveShieldsV2Description,                      \
+     kOsDesktop,                                                         \
+     FEATURE_VALUE_TYPE(brave_shields::features::kBraveShieldsPanelV2)}, \
+    {"brave-shields-v1",                                                 \
+     flag_descriptions::kBraveShieldsV1Name,                             \
+     flag_descriptions::kBraveShieldsV1Description,                      \
+     kOsDesktop,                                                         \
+     FEATURE_VALUE_TYPE(brave_shields::features::kBraveShieldsPanelV1)},
 #else
-#define BRAVE_SHIELDS_V2_FEATURE_ENTRIES
+#define BRAVE_SHIELDS_FEATURE_ENTRIES
 #endif
 
 #define BRAVE_ABOUT_FLAGS_FEATURE_ENTRIES                                   \
@@ -483,6 +497,10 @@ const flags_ui::FeatureEntry::Choice kBraveSkusEnvChoices[] = {
         flag_descriptions::kBraveDebounceName,                              \
         flag_descriptions::kBraveDebounceDescription, kOsAll,               \
         FEATURE_VALUE_TYPE(kBraveDebounce)},                                \
+    {"brave-de-amp",                                                        \
+        flag_descriptions::kBraveDeAMPName,                                 \
+        flag_descriptions::kBraveDeAMPDescription, kOsAll,                  \
+        FEATURE_VALUE_TYPE(kBraveDeAMP)},                                   \
     {"brave-extension-network-blocking",                                    \
      flag_descriptions::kBraveExtensionNetworkBlockingName,                 \
      flag_descriptions::kBraveExtensionNetworkBlockingDescription, kOsAll,  \
@@ -555,5 +573,5 @@ const flags_ui::FeatureEntry::Choice kBraveSkusEnvChoices[] = {
     BRAVE_VPN_FEATURE_ENTRIES                                               \
     BRAVE_SKU_SDK_FEATURE_ENTRIES                                           \
     SPEEDREADER_FEATURE_ENTRIES                                             \
-    BRAVE_SHIELDS_V2_FEATURE_ENTRIES                                        \
+    BRAVE_SHIELDS_FEATURE_ENTRIES                                        \
     BRAVE_TRANSLATE_GO_FEATURE_ENTRIES

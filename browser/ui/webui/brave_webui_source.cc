@@ -769,6 +769,7 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "continue", IDS_BRAVE_REWARDS_CONTINUE },
         { "continueToLogin", IDS_BRAVE_REWARDS_CONTINUE_TO_LOGIN },
         { "minimumBalanceWarning", IDS_BRAVE_REWARDS_MINIMUM_BALANCE_WARNING },
+        { "contributionPendingUntil", IDS_BRAVE_REWARDS_CONTRIBUTION_PENDING_UNTIL },  // NOLINT
 
         { "walletAccountLink", IDS_REWARDS_WALLET_ACCOUNT_LINK },
         { "walletAddFunds", IDS_REWARDS_WALLET_ADD_FUNDS },
@@ -785,7 +786,6 @@ void CustomizeWebUIHTMLSource(const std::string &name,
         { "walletPendingContributions", IDS_REWARDS_WALLET_PENDING_CONTRIBUTIONS },  // NOLINT
         { "walletRewardsFromAds", IDS_REWARDS_WALLET_REWARDS_FROM_ADS },
         { "walletRewardsSummary", IDS_REWARDS_WALLET_REWARDS_SUMMARY },
-        { "walletSeeAll", IDS_REWARDS_WALLET_SEE_ALL },
         { "walletUnverified", IDS_REWARDS_WALLET_UNVERIFIED },
         { "walletViewStatement", IDS_REWARDS_WALLET_VIEW_STATEMENT },
         { "walletVerified", IDS_REWARDS_WALLET_VERIFIED },

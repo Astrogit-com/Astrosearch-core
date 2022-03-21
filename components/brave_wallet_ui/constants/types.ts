@@ -103,7 +103,7 @@ export type PanelTypes =
   | 'transactions'
   | 'transactionDetails'
   | 'assets'
-  | 'provideEncryptionKey'
+  | 'provideEncryptionKey' // For grep: 'getEncryptionPublicKey'
   | 'allowReadingEncryptedMessage'
 
 export type NavTypes =
@@ -215,6 +215,7 @@ export interface WalletState {
   connectedAccounts: WalletAccountType[]
   isMetaMaskInstalled: boolean
   defaultCurrencies: DefaultCurrencies
+  transactionProviderErrorRegistry: TransactionProviderErrorRegistry
 }
 
 export interface PanelState {
@@ -227,7 +228,7 @@ export interface PanelState {
   swapQuote?: BraveWallet.SwapResponse
   swapError?: SwapErrorResponse
   signMessageData: BraveWallet.SignMessageRequest[]
-  publicEncryptionKeyData: BraveWallet.EncryptionKeyRequest
+  getEncryptionPublicKeyRequest: BraveWallet.GetEncryptionPublicKeyRequest
   switchChainRequest: BraveWallet.SwitchChainRequest
   hardwareWalletCode?: HardwareWalletResponseCodeType
   suggestedToken?: BraveWallet.BlockchainToken
@@ -562,4 +563,13 @@ export interface NFTMetadataReturnType {
     facebook: string
     logo: string
   }
+}
+
+export interface TransactionProviderError {
+  code: BraveWallet.ProviderError | BraveWallet.SolanaProviderError
+  message: string
+}
+
+export interface TransactionProviderErrorRegistry {
+  [transactionId: string]: TransactionProviderError
 }

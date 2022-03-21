@@ -32,6 +32,7 @@
 #include "brave/components/brave_wayback_machine/buildflags.h"
 #include "brave/components/brave_webtorrent/browser/buildflags/buildflags.h"
 #include "brave/components/crypto_dot_com/browser/buildflags/buildflags.h"
+#include "brave/components/de_amp/common/pref_names.h"
 #include "brave/components/ftx/browser/buildflags/buildflags.h"
 #include "brave/components/gemini/browser/buildflags/buildflags.h"
 #include "brave/components/ipfs/buildflags/buildflags.h"
@@ -51,6 +52,7 @@
 #include "components/embedder_support/pref_names.h"
 #include "components/gcm_driver/gcm_buildflags.h"
 #include "components/password_manager/core/common/password_manager_pref_names.h"
+#include "components/policy/core/common/policy_pref_names.h"
 #include "components/pref_registry/pref_registry_syncable.h"
 #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
 #include "components/safe_browsing/core/common/safe_browsing_prefs.h"
@@ -305,6 +307,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   // Disable Chromium's privacy sandbox
   registry->SetDefaultPrefValue(prefs::kPrivacySandboxApisEnabled,
                                 base::Value(false));
+  registry->SetDefaultPrefValue(prefs::kPrivacySandboxApisEnabledV2,
+                                base::Value(false));
 
   // Disable Chromium's privacy sandbox
   registry->SetDefaultPrefValue(prefs::kPrivacySandboxFlocEnabled,
@@ -390,6 +394,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   speedreader::SpeedreaderService::RegisterProfilePrefs(registry);
 #endif
 
+  de_amp::RegisterProfilePrefs(registry);
+
 #if BUILDFLAG(CRYPTO_DOT_COM_ENABLED)
   crypto_dot_com::RegisterProfilePrefs(registry);
 #endif
@@ -403,7 +409,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
 #endif
 
 #if BUILDFLAG(ENABLE_SIDEBAR)
-  sidebar::SidebarService::RegisterProfilePrefs(registry);
+  sidebar::SidebarService::RegisterProfilePrefs(registry, chrome::GetChannel());
 #endif
 
 #if !defined(OS_ANDROID)
@@ -425,6 +431,10 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   registry->SetDefaultPrefValue(prefs::kEnableMediaRouter, base::Value(false));
 
   registry->RegisterBooleanPref(kEnableMediaRouterOnRestart, false);
+
+  // Disable Raw sockets API (see github.com/brave/brave-browser/issues/11546).
+  registry->SetDefaultPrefValue(policy::policy_prefs::kEnableDirectSockets,
+                                base::Value(false));
 
   RegisterProfilePrefsForMigration(registry);
 }

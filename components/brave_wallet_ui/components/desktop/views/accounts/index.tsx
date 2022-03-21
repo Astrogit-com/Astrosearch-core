@@ -293,6 +293,7 @@ function Accounts (props: Props) {
               token={item}
             />
           )}
+          <Spacer />
           {erc271Tokens?.length !== 0 &&
             <>
               <Spacer />
@@ -300,6 +301,7 @@ function Accounts (props: Props) {
               <SubDivider />
               {erc271Tokens?.map((item) =>
                 <PortfolioAssetItem
+                  selectedNetwork={selectedNetwork}
                   spotPrices={transactionSpotPrices}
                   defaultCurrencies={defaultCurrencies}
                   key={item.contractAddress}
@@ -310,6 +312,7 @@ function Accounts (props: Props) {
               <Spacer />
             </>
           }
+          <Spacer />
           <SubviewSectionTitle>{getLocale('braveWalletTransactions')}</SubviewSectionTitle>
           <SubDivider />
           {transactionList.length !== 0 ? (

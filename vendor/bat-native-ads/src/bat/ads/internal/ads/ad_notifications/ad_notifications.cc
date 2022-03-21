@@ -22,7 +22,7 @@
 #include "bat/ads/internal/logging.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
 #include "base/android/build_info.h"
 #include "base/system/sys_info.h"
 #endif
@@ -33,7 +33,7 @@ namespace {
 
 AdNotifications* g_ad_notifications = nullptr;
 
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
 const int kMaximumAdNotifications = 3;
 #else
 const int kMaximumAdNotifications = 0;  // No limit
@@ -179,7 +179,7 @@ uint64_t AdNotifications::Count() const {
   return ad_notifications_.size();
 }
 
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
 void AdNotifications::RemoveAllAfterReboot() {
   database::table::AdEvents database_table;
   database_table.GetAll([=](const bool success, const AdEventList& ad_events) {
@@ -222,8 +222,9 @@ void AdNotifications::RemoveAllAfterUpdate() {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::deque<AdNotificationInfo> AdNotifications::GetNotificationsFromList(
-    base::ListValue* list) const {
+    base::Value* list) const {
   DCHECK(list);
+  DCHECK(list->is_list());
 
   std::deque<AdNotificationInfo> notifications;
 
@@ -361,14 +362,12 @@ bool AdNotifications::GetStringFromDictionary(const std::string& key,
   DCHECK(dictionary);
   DCHECK(string);
 
-  auto* value = dictionary->FindKey(key);
-  if (!value || !value->is_string()) {
+  std::string* value = dictionary->FindStringKey(key);
+  if (!value) {
     return false;
   }
 
-  auto string_value = value->GetString();
-
-  *string = string_value;
+  *string = *value;
 
   return true;
 }
@@ -453,17 +452,12 @@ bool AdNotifications::GetNotificationsFromDictionary(
     base::DictionaryValue* dictionary) {
   DCHECK(dictionary);
 
-  auto* value = dictionary->FindKey(kNotificationsListKey);
-  if (!value || !value->is_list()) {
+  auto* value = dictionary->FindListKey(kNotificationsListKey);
+  if (!value) {
     return false;
   }
 
-  base::ListValue* list = nullptr;
-  if (!value->GetAsList(&list)) {
-    return false;
-  }
-
-  ad_notifications_ = GetNotificationsFromList(list);
+  ad_notifications_ = GetNotificationsFromList(value);
 
   return true;
 }
@@ -472,8 +466,7 @@ std::string AdNotifications::ToJson() {
   base::Value dictionary(base::Value::Type::DICTIONARY);
 
   auto notifications = GetAsList();
-  dictionary.SetKey(kNotificationsListKey,
-                    base::Value(std::move(notifications)));
+  dictionary.SetKey(kNotificationsListKey, std::move(notifications));
 
   // Write to JSON
   std::string json;
@@ -488,22 +481,20 @@ base::Value AdNotifications::GetAsList() {
   for (const auto& ad_notification : ad_notifications_) {
     base::Value dictionary(base::Value::Type::DICTIONARY);
 
-    dictionary.SetKey(kNotificationUuidKey, base::Value(ad_notification.uuid));
-    dictionary.SetKey(kNotificationCreativeInstanceIdKey,
-                      base::Value(ad_notification.creative_instance_id));
-    dictionary.SetKey(kNotificationCreativeSetIdKey,
-                      base::Value(ad_notification.creative_set_id));
-    dictionary.SetKey(kNotificationCampaignIdKey,
-                      base::Value(ad_notification.campaign_id));
-    dictionary.SetKey(kNotificationAdvertiserIdKey,
-                      base::Value(ad_notification.advertiser_id));
-    dictionary.SetKey(kNotificationSegmentKey,
-                      base::Value(ad_notification.segment));
-    dictionary.SetKey(kNotificationTitleKey,
-                      base::Value(ad_notification.title));
-    dictionary.SetKey(kNotificationBodyKey, base::Value(ad_notification.body));
-    dictionary.SetKey(kNotificationTargetUrlKey,
-                      base::Value(ad_notification.target_url));
+    dictionary.SetStringKey(kNotificationUuidKey, ad_notification.uuid);
+    dictionary.SetStringKey(kNotificationCreativeInstanceIdKey,
+                            ad_notification.creative_instance_id);
+    dictionary.SetStringKey(kNotificationCreativeSetIdKey,
+                            ad_notification.creative_set_id);
+    dictionary.SetStringKey(kNotificationCampaignIdKey,
+                            ad_notification.campaign_id);
+    dictionary.SetStringKey(kNotificationAdvertiserIdKey,
+                            ad_notification.advertiser_id);
+    dictionary.SetStringKey(kNotificationSegmentKey, ad_notification.segment);
+    dictionary.SetStringKey(kNotificationTitleKey, ad_notification.title);
+    dictionary.SetStringKey(kNotificationBodyKey, ad_notification.body);
+    dictionary.SetStringKey(kNotificationTargetUrlKey,
+                            ad_notification.target_url);
 
     list.Append(std::move(dictionary));
   }

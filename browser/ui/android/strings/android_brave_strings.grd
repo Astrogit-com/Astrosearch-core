@@ -965,7 +965,7 @@ Are you sure you want to do this?
         Disconnected
       </message>
       <message name="IDS_BRAVE_UI_WALLET_BUTTON_UNVERIFIED" desc="">
-        Verify Wallet
+        Unverified
       </message>
       <message name="IDS_BRAVE_UI_WALLET_BUTTON_VERIFIED" desc="">
         Wallet Verified
@@ -1006,6 +1006,9 @@ Are you sure you want to do this?
       <message name="IDS_BITFLYER">
         Bitflyer
       </message>
+      <message name="IDS_GEMINI">
+        Gemini
+      </message>
       <message name="IDS_VERIFY_WALLET_PROVIDER_NOTE1">
         Uphold may require you to verify your identity based on services requested.
       </message>
@@ -1022,7 +1025,7 @@ Are you sure you want to do this?
         Go to my <ph name="WALLET_PROVIDER">%1$s</ph> account
       </message>
       <message name="IDS_USER_WALLET_DISCONNECT_REWARDS">
-        Disconnect from Brave Rewards
+        Disconnect from <ph name="WALLET_PROVIDER">%1$s</ph>
       </message>
       <message name="IDS_USER_WALLET_WITHDRAW_FUNDS">
         Withdraw Funds
@@ -2469,6 +2472,21 @@ If you don't accept this request, VPN will not reconnect and your internet conne
     </message>
     <message name="IDS_TRANSACTION" desc="Brave crypto wallet transaction title">
       Transaction
+    </message>
+    <message name="IDS_BRAVE_WALLET_ADVANCED_SETTINGS" desc="Brave crypto wallet transaction setting to change nonce">
+      Advanced Settings
+    </message>
+    <message name="IDS_BRAVE_WALLET_NONCE_LABEL" desc="Brave crypto wallet nonce label">
+      Nonce
+    </message>
+    <message name="IDS_BRAVE_WALLET_ADVANCED_SETTINGS_NONCE_HINT" desc="Brave crypto wallet advance setting custom nonce hint">
+      Enter custom nonce value
+    </message>
+    <message name="IDS_BRAVE_WALLET_ADVANCED_SETTINGS_SAVE" desc="Brave crypto wallet advance setting save/set nonce value action button">
+      Save
+    </message>
+    <message name="IDS_BRAVE_WALLET_TX_PROPOGATION_WARNING" desc="Trnsaction warning regarding low gas or invalid nonce etc.">
+      Transaction may not be propagated to the network if custom nonce value is non-sequential or has other errors.
     </message>
     <message name="IDS_TRANSACTION_DETAILS" desc="Brave crypto wallet transaction details section">
       Details

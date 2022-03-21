@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Route, useHistory, useParams } from 'react-router-dom'
+import { Route, useHistory, useLocation, useParams } from 'react-router-dom'
 import { StyledWrapper } from './style'
 import {
   BraveWallet,
@@ -33,7 +33,7 @@ export interface Props {
   onSelectAsset: (asset: BraveWallet.BlockchainToken | undefined) => void
   onCreateAccount: (name: string, coin: BraveWallet.CoinType) => void
   onImportAccount: (accountName: string, privateKey: string, coin: BraveWallet.CoinType) => void
-  onImportFilecoinAccount: (accountName: string, key: string, network: string, protocol: BraveWallet.FilecoinAddressProtocol) => void
+  onImportFilecoinAccount: (accountName: string, key: string, network: string) => void
   onConnectHardwareWallet: (opts: HardwareWalletConnectOpts) => Promise<BraveWallet.HardwareWalletAccount[]>
   onAddHardwareAccounts: (selected: BraveWallet.HardwareWalletAccount[]) => void
   getBalance: (address: string) => Promise<string>
@@ -87,6 +87,7 @@ export interface Props {
 }
 
 const CryptoView = (props: Props) => {
+  const { pathname: walletLocation } = useLocation()
   let history = useHistory()
   const {
     onLockWallet,
@@ -204,22 +205,15 @@ const CryptoView = (props: Props) => {
   }
 
   const onCloseAddModal = () => {
-    history.push(`${WalletRoutes.Accounts}`)
+    if (walletLocation.includes(WalletRoutes.Accounts)) {
+      history.push(WalletRoutes.Accounts)
+    }
     onHideAddModal()
   }
 
   const onClickAddAccount = (tabId: AddAccountNavTypes) => () => {
-    if (tabId === 'create') {
-      history.push(`${WalletRoutes.AddAccountModal}`)
-      setAddAccountModalTab(tabId)
-      return
-    }
     setAddAccountModalTab(tabId)
     onShowAddModal()
-  }
-
-  const onRouteBack = () => {
-    history.push(`${WalletRoutes.Accounts}`)
   }
 
   const selectAsset = (asset: BraveWallet.BlockchainToken | undefined) => {
@@ -368,7 +362,6 @@ const CryptoView = (props: Props) => {
           accounts={accounts}
           selectedNetwork={selectedNetwork}
           onClose={onCloseAddModal}
-          onRouteBackToAccounts={onRouteBack}
           onCreateAccount={onCreateAccount}
           onImportAccount={onImportAccount}
           isFilecoinEnabled={isFilecoinEnabled}

@@ -70,7 +70,7 @@ export interface Props {
   onAddHardwareAccounts: (selected: BraveWallet.HardwareWalletAccount[]) => void
   onConnectHardwareWallet: (opts: HardwareWalletConnectOpts) => Promise<BraveWallet.HardwareWalletAccount[]>
   onImportAccount: (accountName: string, privateKey: string, coin: BraveWallet.CoinType) => void
-  onImportFilecoinAccount: (accountName: string, privateKey: string, network: string, protocol: BraveWallet.FilecoinAddressProtocol) => void
+  onImportFilecoinAccount: (accountName: string, privateKey: string, network: string) => void
   onCreateAccount: (name: string) => void
   onSelectAsset: (asset: BraveWallet.BlockchainToken | undefined) => void
   onChangeTimeline: (path: BraveWallet.AssetPriceTimeframe) => void
@@ -202,10 +202,6 @@ const CryptoStoryView = (props: Props) => {
   const onClickSettings = () => {
     // Does nothing in storybook
     alert('Will Nav to brave://settings/wallet')
-  }
-
-  const onRouteBackToAccounts = () => {
-    // Does nothing in storybook
   }
 
   const onClickRetryTransaction = () => {
@@ -363,7 +359,6 @@ const CryptoStoryView = (props: Props) => {
           onImportAccountFromJson={onImportAccountFromJson}
           hasImportError={hasImportError}
           onSetImportError={onSetImportError}
-          onRouteBackToAccounts={onRouteBackToAccounts}
           tab={addAccountModalTab}
         />
       }

@@ -11,9 +11,11 @@
 
 #include "base/memory/raw_ptr.h"
 #include "base/observer_list.h"
+#include "base/observer_list_types.h"
 #include "brave/components/sidebar/sidebar_item.h"
 #include "components/keyed_service/core/keyed_service.h"
 #include "components/prefs/pref_change_registrar.h"
+#include "components/version_info/channel.h"
 
 class PrefRegistrySimple;
 class PrefService;
@@ -42,7 +44,8 @@ class SidebarService : public KeyedService {
     ~Observer() override = default;
   };
 
-  static void RegisterProfilePrefs(PrefRegistrySimple* registry);
+  static void RegisterProfilePrefs(PrefRegistrySimple* registry,
+                                   version_info::Channel channel);
 
   explicit SidebarService(PrefService* prefs);
   ~SidebarService() override;

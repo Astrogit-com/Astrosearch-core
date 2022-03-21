@@ -12,6 +12,7 @@
 
 #include "bat/ads/ad_notification_info.h"
 #include "bat/ads/ads_aliases.h"
+#include "build/build_config.h"
 
 namespace base {
 class DictionaryValue;
@@ -46,7 +47,7 @@ class AdNotifications final {
 
   uint64_t Count() const;
 
-#if defined(OS_ANDROID)
+#if BUILDFLAG(IS_ANDROID)
   void RemoveAllAfterReboot();
   void RemoveAllAfterUpdate();
 #endif
@@ -59,7 +60,7 @@ class AdNotifications final {
   std::deque<AdNotificationInfo> ad_notifications_;
 
   std::deque<AdNotificationInfo> GetNotificationsFromList(
-      base::ListValue* list) const;
+      base::Value* list) const;
 
   bool GetNotificationFromDictionary(base::DictionaryValue* dictionary,
                                      AdNotificationInfo* ad_notification) const;

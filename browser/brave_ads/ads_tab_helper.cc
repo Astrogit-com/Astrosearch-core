@@ -19,7 +19,7 @@
 #include "ui/base/page_transition_types.h"
 #include "ui/base/resource/resource_bundle.h"
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_list.h"
 #include "chrome/browser/ui/tabs/tab_strip_model.h"
@@ -40,7 +40,7 @@ AdsTabHelper::AdsTabHelper(content::WebContents* web_contents)
       Profile::FromBrowserContext(web_contents->GetBrowserContext());
   ads_service_ = AdsServiceFactory::GetForProfile(profile);
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
   BrowserList::AddObserver(this);
   OnBrowserSetLastActive(BrowserList::GetInstance()->GetLastActive());
 #endif
@@ -48,7 +48,7 @@ AdsTabHelper::AdsTabHelper(content::WebContents* web_contents)
 }
 
 AdsTabHelper::~AdsTabHelper() {
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
   BrowserList::RemoveObserver(this);
 #endif
 }
@@ -85,9 +85,7 @@ void AdsTabHelper::OnJavaScriptHtmlResult(base::Value value) {
   if (!value.is_string()) {
     return;
   }
-  std::string html;
-  value.GetAsString(&html);
-
+  const std::string& html = value.GetString();
   ads_service_->OnHtmlLoaded(tab_id_, redirect_chain_, html);
 }
 
@@ -99,9 +97,7 @@ void AdsTabHelper::OnJavaScriptTextResult(base::Value value) {
   if (!value.is_string()) {
     return;
   }
-  std::string text;
-  value.GetAsString(&text);
-
+  const std::string& text = value.GetString();
   ads_service_->OnTextLoaded(tab_id_, redirect_chain_, text);
 }
 
@@ -206,7 +202,7 @@ void AdsTabHelper::WebContentsDestroyed() {
   ads_service_ = nullptr;
 }
 
-#if !defined(OS_ANDROID)
+#if !BUILDFLAG(IS_ANDROID)
 // components/brave_ads/browser/background_helper_android.cc handles Android
 void AdsTabHelper::OnBrowserSetLastActive(Browser* browser) {
   if (!browser) {
